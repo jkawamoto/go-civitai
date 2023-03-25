@@ -1,0 +1,590 @@
+swagger: "2.0"
+info:
+  title: Civitai API
+  version: v1
+host: civitai.com
+basePath: /api/v1
+schemes:
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /creators:
+    get:
+      operationId: getCreators
+      parameters:
+        - name: limit
+          type: integer
+          format: int64
+          in: query
+          description: >-
+            The number of results to be returned per page.
+            This can be a number between 0 and 200. By default, each page will return 20 results.
+            If set to 0, it'll return all the creators.
+          minimum: 0
+          maximum: 200
+        - name: page
+          type: integer
+          format: int64
+          in: query
+          description: >-
+            The page from which to start fetching creators.
+        - name: query
+          type: string
+          in: query
+          description: >-
+            Search query to filter creators by username.
+      responses:
+        200:
+          description: A list of creators.
+          schema:
+            $ref: "#/definitions/CreatorsResponse"
+        default:
+          description: Error Response
+          schema:
+            $ref: "#/definitions/StandardError"
+  /models:
+    get:
+      operationId: getModels
+      parameters:
+        - name: limit
+          type: integer
+          format: int64
+          in: query
+          description: >-
+            The number of results to be returned per page. This can be a number between 1 and 200.
+            By default, each page will return 100 results.
+          minimum: 0
+          maximum: 200
+        - name: page
+          type: integer
+          format: int64
+          in: query
+          description: >-
+            The page from which to start fetching models.
+        - name: query
+          type: string
+          in: query
+          description: >-
+            Search query to filter models by name.
+        - name: tag
+          type: string
+          in: query
+          description: >-
+            Search query to filter models by tag.
+        - name: username
+          type: string
+          in: query
+          description: >-
+            Search query to filter models by user.
+        - name: types
+          type: string
+          enum:
+            - Checkpoint
+            - TextualInversion
+            - Hypernetwork
+            - AestheticGradient
+            - LORA
+            - LyCORIS
+            - Controlnet
+            - Wildcards
+            - Poses
+            - Other
+          in: query
+          description: >-
+            The type of model you want to filter with. If none is specified, it will return all types.
+        - name: sort
+          type: string
+          enum:
+            - Highest Rated
+            - Most Downloaded
+            - Newest
+          in: query
+          description: >-
+            The order in which you wish to sort the results.
+        - name: period
+          type: string
+          enum:
+            - AllTime
+            - Year
+            - Month
+            - Week
+            - Day
+          in: query
+          description: >-
+            The time frame in which the models will be sorted.
+        - name: rating
+          type: number
+          format: int64
+          in: query
+          description: >-
+            The rating you wish to filter the models with.
+            If none is specified, it will return models with any rating.
+        - name: favorites
+          type: boolean
+          in: query
+          description: >-
+            Filter to favorites of the authenticated user (this requires an API token or session cookie).
+        - name: hidden
+          type: boolean
+          in: query
+          description: >-
+            Filter to hidden models of the authenticated user (this requires an API token or session cookie).
+        - name: primaryFileOnly
+          type: boolean
+          in: query
+          description: >-
+            Only include the primary file for each model
+            (This will use your preferred format options if you use an API token or session cookie).
+      responses:
+        200:
+          description: A list of models.
+          schema:
+            $ref: "#/definitions/ModelsResponse"
+        default:
+          description: Error Response
+          schema:
+            $ref: "#/definitions/StandardError"
+  /models/{modelId}:
+    get:
+      operationId: getModel
+      parameters:
+        - name: modelId
+          type: integer
+          format: int64
+          in: path
+          required: true
+      responses:
+        200:
+          description: The model info.
+          schema:
+            $ref: "#/definitions/Model"
+        default:
+          description: Error Response
+          schema:
+            $ref: "#/definitions/StandardError"
+  /model-versions/{modelVersionId}:
+    get:
+      operationId: getModelVersion
+      parameters:
+        - name: modelVersionId
+          type: integer
+          format: int64
+          in: path
+          required: true
+      responses:
+        200:
+          description: The model version info.
+          schema:
+            $ref: "#/definitions/ModelVersion"
+        default:
+          description: Error Response
+          schema:
+            $ref: "#/definitions/StandardError"
+  /model-versions/by-hash/{hash}:
+    get:
+      operationId: getModelVersionByHash
+      parameters:
+        - name: hash
+          type: string
+          in: path
+          required: true
+      responses:
+        200:
+          description: The model version info.
+          schema:
+            $ref: "#/definitions/ModelVersion"
+        default:
+          description: Error Response
+          schema:
+            $ref: "#/definitions/StandardError"
+  /tags:
+    get:
+      operationId: getTags
+      parameters:
+        - name: limit
+          type: integer
+          format: int64
+          in: query
+          description: >-
+            The number of results to be returned per page. This can be a number between 1 and 200.
+            By default, each page will return 20 results. If set to 0, it'll return all the tags.
+          minimum: 0
+          maximum: 200
+        - name: page
+          type: integer
+          format: int64
+          in: query
+          description: >-
+            The page from which to start fetching tags.
+        - name: query
+          type: string
+          in: query
+          description: >-
+            Search query to filter tags by name.
+      responses:
+        200:
+          description: A list of tags.
+          schema:
+            $ref: "#/definitions/TagsResponse"
+        default:
+          description: Error Response
+          schema:
+            $ref: "#/definitions/StandardError"
+definitions:
+  CreatorsResponse:
+    properties:
+      items:
+        type: array
+        items:
+          $ref: "#/definitions/Creator"
+      metadata:
+        $ref: "#/definitions/Metadata"
+  ModelsResponse:
+    properties:
+      items:
+        type: array
+        items:
+          $ref: "#/definitions/Model"
+      metadata:
+        $ref: "#/definitions/Metadata"
+  TagsResponse:
+    properties:
+      items:
+        type: array
+        items:
+          $ref: "#/definitions/Tag"
+      metadata:
+        $ref: "#/definitions/Metadata"
+  Creator:
+    properties:
+      username:
+        type: string
+        description: The username of the creator.
+        example: Civitai
+      modelCount:
+        type: integer
+        format: int64
+        description: The amount of models linked to this user.
+        example: 848
+      link:
+        type: string
+        description: Url to get all models from this user.
+        example: https://civitai.com/api/v1/models?username=Civitai
+  Model:
+    properties:
+      id:
+        type: integer
+        format: int64
+        description: The identifier for the model.
+      name:
+        type: string
+        description: The name of the model.
+      description:
+        type: string
+        description: The description of the model (HTML).
+      type:
+        type: string
+        enum:
+          - Checkpoint
+          - TextualInversion
+          - Hypernetwork
+          - AestheticGradient
+          - LORA
+          - LyCORIS
+          - Controlnet
+          - Wildcards
+          - Poses
+          - Other
+        description: The model type.
+      poi:
+        type: boolean
+      nsfw:
+        type: boolean
+        description: Whether the model is NSFW or not.
+      allowNoCredit:
+        type: boolean
+      allowCommercialUse:
+        type: string
+      allowDerivatives:
+        type: boolean
+      allowDifferentLicense:
+        type: boolean
+      stats:
+        $ref: "#/definitions/Stats"
+      rank:
+        $ref: "#/definitions/Rank"
+      creator:
+        $ref: "#/definitions/ModelCreator"
+      tags:
+        type: array
+        items:
+          type: string
+        description: The tags associated with the model.
+      modelVersions:
+        type: array
+        items:
+          $ref: "#/definitions/ModelVersion"
+  Stats:
+    properties:
+      downloadCount:
+        type: integer
+        format: int64
+      favoriteCount:
+        type: integer
+        format: int64
+      commentCount:
+        type: integer
+        format: int64
+      ratingCount:
+        type: integer
+        format: int64
+      rating:
+        type: number
+        format: double
+  Rank:
+    properties:
+      downloadCountAllTime:
+        type: integer
+        format: int64
+      commentCountAllTime:
+        type: integer
+        format: int64
+      favoriteCountAllTime:
+        type: integer
+        format: int64
+      ratingCountAllTime:
+        type: integer
+        format: int64
+      ratingAllTime:
+        type: number
+        format: double
+  ModelCreator:
+    properties:
+      username:
+        type: string
+        description: The name of the creator.
+      image:
+        type: string
+        description: The url of the creators avatar.
+  ModelVersion:
+    properties:
+      id:
+        type: integer
+        format: int64
+        description: The identifier for the model version.
+      modelId:
+        type: integer
+        format: int64
+      name:
+        type: string
+        description: The name of the model version.
+      createdAt:
+        type: string
+        format: date-time
+        description: The date in which the version was created.
+      updatedAt:
+        type: string
+        format: date-time
+      trainedWords:
+        type: array
+        items:
+          type: string
+        description: The words used to trigger the model.
+      baseModel:
+        type: string
+      earlyAccessTimeFrame:
+        type: integer
+        format: int64
+      description:
+        type: string
+        description: The description of the model version (usually a changelog).
+      files:
+        type: array
+        items:
+          $ref: "#/definitions/File"
+      images:
+        type: array
+        items:
+          $ref: "#/definitions/Image"
+      downloadUrl:
+        type: string
+        description: The download url to get the model file for this specific version.
+  File:
+    properties:
+      name:
+        type: string
+      id:
+        type: integer
+        format: int64
+      sizeKB:
+        type: number
+        format: double
+        description: The size of the model file.
+      type:
+        type: string
+      format:
+        type: string
+        description: The format of the file ('pickle' or 'safetensor').
+      pickleScanResult:
+        type: string
+        description: Status of the pickle scan ('Pending', 'Success', 'Danger', 'Error').
+      pickleScanMessage:
+        type: string
+      virusScanResult:
+        type: string
+        description: Status of the virus scan ('Pending', 'Success', 'Danger', 'Error').
+      scannedAt:
+        type: string
+        format: date-time
+        description: The date in which the file was scanned.
+      hashes:
+        $ref: "#/definitions/Hash"
+      downloadUrl:
+        type: string
+      primary:
+        type: boolean
+        description: If the file is the primary file for the model version.
+  Hash:
+    properties:
+      AutoV1:
+        type: string
+        example: 95F8D0A7
+      AutoV2:
+        type: string
+        example: 95AFA0D9EA
+      SHA256:
+        type: string
+        example: 95AFA0D9EADAC2A04671ED18202FCF09C990148E1CD0AE477BF57F763B948615
+      CRC32:
+        type: string
+        example: F28B4B59
+      BLAKE3:
+        type: string
+        example: CC4CD6EA2B502C61B4BD86CA5C4B07AF269877877CEC7FB14EEAE846555CED1E
+  Image:
+    properties:
+      url:
+        type: string
+        description: The url for the image.
+      nsfw:
+        type: boolean
+        description: >-
+          Whether or not the image is NSFW (note: if the model is NSFW, treat all images on the model as NSFW).
+      width:
+        type: integer
+        format: int64
+        description: The original width of the image.
+      height:
+        type: integer
+        format: int64
+        description: The original height of the image.
+      hash:
+        type: string
+        description: The blurhash of the image.
+      meta:
+        $ref: "#/definitions/ImageMetadata"
+        description: The generation params of the image.
+      userId:
+        type: integer
+        format: int64
+      generationProcess:
+        type: string
+      needsReview:
+        type: boolean
+      scannedAt:
+        type: string
+        format: date-time
+      tags:
+        type: array
+        items:
+          $ref: "#/definitions/ImageTag"
+  ImageMetadata:
+    properties:
+      resources:
+        type: array
+        items:
+          $ref: "#/definitions/ImageResource"
+    additionalProperties: true
+  ImageResource:
+    properties:
+      name:
+        type: string
+      type:
+        type: string
+      hash:
+        type: string
+      weight:
+        type: number
+        format: double
+  ImageTag:
+    properties:
+      tag:
+        $ref: "#/definitions/ImageTagData"
+      automated:
+        type: boolean
+      needsReview:
+        type: boolean
+  ImageTagData:
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+      isCategory:
+        type: boolean
+      type:
+        type: string
+  Tag:
+    properties:
+      name:
+        type: string
+        description: The name of the tag.
+      modelCount:
+        type: integer
+        format: int64
+        description: The amount of models linked to this tag.
+      link:
+        type: string
+        description: Url to get all models from this tag.
+  Metadata:
+    properties:
+      totalItems:
+        type: integer
+        format: int64
+        description: The total number of items available.
+        example: 46
+      currentPage:
+        type: integer
+        format: int64
+        description: The the current page you are at.
+        example: 2
+      pageSize:
+        type: integer
+        format: int64
+        description: The the size of the batch.
+        example: 3
+      totalPages:
+        type: integer
+        format: int64
+        description: The total number of pages.
+        example: 16
+      nextPage:
+        type: string
+        description: The url to get the next batch of items.
+        example: https://civitai.com/api/v1/creators?limit=3&page=3
+      prevPage:
+        type: string
+        description: The url to get the previous batch of items.
+        example: https://civitai.com/api/v1/creators?limit=3&page=1
+  StandardError:
+    required:
+      - error
+    properties:
+      error:
+        type: string
+        example: >-
+          Something went wrong while writing the file to disk, the server may be out of storage space.
