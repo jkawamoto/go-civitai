@@ -17,83 +17,63 @@ import (
 	"github.com/jkawamoto/go-civitai/client/operations"
 )
 
-func ExampleGetCreators() {
+func Example() {
 	ctx := context.Background()
 
-	res, err := client.Default.Operations.GetCreators(
+	// List creators.
+	creators, err := client.Default.Operations.GetCreators(
 		operations.NewGetCreatorsParamsWithContext(ctx).WithLimit(swag.Int64(3)))
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	for _, v := range res.Payload.Items {
+	for _, v := range creators.Payload.Items {
 		log.Println(v.Username, v.ModelCount)
 	}
-}
 
-func ExampleGetModels() {
-	ctx := context.Background()
-
-	res, err := client.Default.Operations.GetModels(
+	// List models.
+	models, err := client.Default.Operations.GetModels(
 		operations.NewGetModelsParamsWithContext(ctx).WithLimit(swag.Int64(3)))
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	for _, v := range res.Payload.Items {
+	for _, v := range models.Payload.Items {
 		log.Println(v.Name, v.ID, v.Tags)
 	}
-}
 
-func ExampleGetModel() {
-	ctx := context.Background()
-
-	res, err := client.Default.Operations.GetModel(
+	// Retrieve a model.
+	m, err := client.Default.Operations.GetModel(
 		operations.NewGetModelParamsWithContext(ctx).WithModelID(6424))
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	for _, v := range res.Payload.ModelVersions {
+	for _, v := range m.Payload.ModelVersions {
 		log.Println(v.Name, v.DownloadURL, v.ID, v.Files[0].ID)
 	}
-}
 
-func ExampleGetModelVersion() {
-	ctx := context.Background()
-
-	res, err := client.Default.Operations.GetModelVersion(
+	// Retrieve a model version.
+	ver, err := client.Default.Operations.GetModelVersion(
 		operations.NewGetModelVersionParamsWithContext(ctx).WithModelVersionID(8958))
 	if err != nil {
 		log.Fatal(err)
 	}
+	log.Println(ver.Payload.Name, ver.Payload.CreatedAt)
 
-	log.Println(res.Payload.Name, res.Payload.CreatedAt)
-}
-
-func ExampleGetModelVersionByHash() {
-	ctx := context.Background()
+	// Retrieve a model version by a hash.
 	hash := "64018b0e58e2495dbdc6b5ddfd97b39528af531c97ab4073ff13b45858a200a2"
-
-	res, err := client.Default.Operations.GetModelVersionByHash(
+	ver2, err := client.Default.Operations.GetModelVersionByHash(
 		operations.NewGetModelVersionByHashParamsWithContext(ctx).WithHash(hash))
 	if err != nil {
 		log.Fatal(err)
 	}
+	log.Println(ver2.Payload.Name, ver2.Payload.UpdatedAt)
 
-	log.Println(res.Payload.Name, res.Payload.UpdatedAt)
-}
-
-func ExampleGetTags() {
-	ctx := context.Background()
-
-	res, err := client.Default.Operations.GetTags(
+	// List tags.
+	tags, err := client.Default.Operations.GetTags(
 		operations.NewGetTagsParamsWithContext(ctx).WithLimit(swag.Int64(3)))
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	for _, v := range res.Payload.Items {
+	for _, v := range tags.Payload.Items {
 		log.Println(v.Name, v.ModelCount)
 	}
 }
