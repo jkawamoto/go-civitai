@@ -79,6 +79,7 @@ type GetModelsParams struct {
 	   The number of results to be returned per page. This can be a number between 1 and 200. By default, each page will return 100 results.
 
 	   Format: int64
+	   Default: 100
 	*/
 	Limit *int64
 
@@ -157,7 +158,18 @@ func (o *GetModelsParams) WithDefaults() *GetModelsParams {
 //
 // All values with no default are reset to their zero value.
 func (o *GetModelsParams) SetDefaults() {
-	// no default values defined for this parameter
+	var (
+		limitDefault = int64(100)
+	)
+
+	val := GetModelsParams{
+		Limit: &limitDefault,
+	}
+
+	val.timeout = o.timeout
+	val.Context = o.Context
+	val.HTTPClient = o.HTTPClient
+	*o = val
 }
 
 // WithTimeout adds the timeout to the get models params

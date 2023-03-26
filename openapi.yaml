@@ -23,6 +23,7 @@ paths:
             The number of results to be returned per page.
             This can be a number between 0 and 200. By default, each page will return 20 results.
             If set to 0, it'll return all the creators.
+          default: 20
           minimum: 0
           maximum: 200
         - name: page
@@ -56,6 +57,7 @@ paths:
           description: >-
             The number of results to be returned per page. This can be a number between 1 and 200.
             By default, each page will return 100 results.
+          default: 100
           minimum: 0
           maximum: 200
         - name: page
@@ -211,6 +213,7 @@ paths:
           description: >-
             The number of results to be returned per page. This can be a number between 1 and 200.
             By default, each page will return 20 results. If set to 0, it'll return all the tags.
+          default: 20
           minimum: 0
           maximum: 200
         - name: page

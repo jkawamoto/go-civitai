@@ -67,6 +67,7 @@ type GetCreatorsParams struct {
 	   The number of results to be returned per page. This can be a number between 0 and 200. By default, each page will return 20 results. If set to 0, it'll return all the creators.
 
 	   Format: int64
+	   Default: 20
 	*/
 	Limit *int64
 
@@ -101,7 +102,18 @@ func (o *GetCreatorsParams) WithDefaults() *GetCreatorsParams {
 //
 // All values with no default are reset to their zero value.
 func (o *GetCreatorsParams) SetDefaults() {
-	// no default values defined for this parameter
+	var (
+		limitDefault = int64(20)
+	)
+
+	val := GetCreatorsParams{
+		Limit: &limitDefault,
+	}
+
+	val.timeout = o.timeout
+	val.Context = o.Context
+	val.HTTPClient = o.HTTPClient
+	*o = val
 }
 
 // WithTimeout adds the timeout to the get creators params

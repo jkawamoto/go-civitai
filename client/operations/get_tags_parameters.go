@@ -67,6 +67,7 @@ type GetTagsParams struct {
 	   The number of results to be returned per page. This can be a number between 1 and 200. By default, each page will return 20 results. If set to 0, it'll return all the tags.
 
 	   Format: int64
+	   Default: 20
 	*/
 	Limit *int64
 
@@ -101,7 +102,18 @@ func (o *GetTagsParams) WithDefaults() *GetTagsParams {
 //
 // All values with no default are reset to their zero value.
 func (o *GetTagsParams) SetDefaults() {
-	// no default values defined for this parameter
+	var (
+		limitDefault = int64(20)
+	)
+
+	val := GetTagsParams{
+		Limit: &limitDefault,
+	}
+
+	val.timeout = o.timeout
+	val.Context = o.Context
+	val.HTTPClient = o.HTTPClient
+	*o = val
 }
 
 // WithTimeout adds the timeout to the get tags params
