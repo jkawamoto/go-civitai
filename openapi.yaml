@@ -324,7 +324,7 @@ definitions:
       tags:
         type: array
         items:
-          type: string
+          $ref: "#/definitions/Tag"
         description: The tags associated with the model.
       modelVersions:
         type: array
