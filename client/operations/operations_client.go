@@ -30,6 +30,8 @@ type ClientOption func(*runtime.ClientOperation)
 type ClientService interface {
 	GetCreators(params *GetCreatorsParams, opts ...ClientOption) (*GetCreatorsOK, error)
 
+	GetImages(params *GetImagesParams, opts ...ClientOption) (*GetImagesOK, error)
+
 	GetModel(params *GetModelParams, opts ...ClientOption) (*GetModelOK, error)
 
 	GetModelVersion(params *GetModelVersionParams, opts ...ClientOption) (*GetModelVersionOK, error)
@@ -77,6 +79,43 @@ func (a *Client) GetCreators(params *GetCreatorsParams, opts ...ClientOption) (*
 	}
 	// unexpected success response
 	unexpectedSuccess := result.(*GetCreatorsDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+GetImages get images API
+*/
+func (a *Client) GetImages(params *GetImagesParams, opts ...ClientOption) (*GetImagesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetImagesParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "getImages",
+		Method:             "GET",
+		PathPattern:        "/images",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetImagesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetImagesOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*GetImagesDefault)
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

@@ -20,6 +20,11 @@ import (
 // swagger:model Image
 type Image struct {
 
+	// The date the image was posted.
+	// Example: 2023-04-06T09:14:50.762Z
+	// Format: date-time
+	CreatedAt strfmt.DateTime `json:"createdAt,omitempty"`
+
 	// generation process
 	GenerationProcess string `json:"generationProcess,omitempty"`
 
@@ -28,6 +33,9 @@ type Image struct {
 
 	// The original height of the image.
 	Height int64 `json:"height,omitempty"`
+
+	// The id of the image.
+	ID int64 `json:"id,omitempty"`
 
 	// The generation params of the image.
 	Meta *ImageMetadata `json:"meta,omitempty"`
@@ -38,9 +46,15 @@ type Image struct {
 	// Whether or not the image is NSFW (note: if the model is NSFW, treat all images on the model as NSFW).
 	Nsfw bool `json:"nsfw,omitempty"`
 
+	// The ID of the post the image belongs to.
+	PostID int64 `json:"postId,omitempty"`
+
 	// scanned at
 	// Format: date-time
 	ScannedAt strfmt.DateTime `json:"scannedAt,omitempty"`
+
+	// stats
+	Stats *ImageStats `json:"stats,omitempty"`
 
 	// tags
 	Tags []*ImageTag `json:"tags"`
@@ -51,6 +65,9 @@ type Image struct {
 	// user Id
 	UserID int64 `json:"userId,omitempty"`
 
+	// The username of the creator.
+	Username string `json:"username,omitempty"`
+
 	// The original width of the image.
 	Width int64 `json:"width,omitempty"`
 }
@@ -59,11 +76,19 @@ type Image struct {
 func (m *Image) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateCreatedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateMeta(formats); err != nil {
 		res = append(res, err)
 	}
 
 	if err := m.validateScannedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateStats(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -74,6 +99,18 @@ func (m *Image) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *Image) validateCreatedAt(formats strfmt.Registry) error {
+	if swag.IsZero(m.CreatedAt) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("createdAt", "body", "date-time", m.CreatedAt.String(), formats); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -103,6 +140,25 @@ func (m *Image) validateScannedAt(formats strfmt.Registry) error {
 
 	if err := validate.FormatOf("scannedAt", "body", "date-time", m.ScannedAt.String(), formats); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (m *Image) validateStats(formats strfmt.Registry) error {
+	if swag.IsZero(m.Stats) { // not required
+		return nil
+	}
+
+	if m.Stats != nil {
+		if err := m.Stats.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("stats")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("stats")
+			}
+			return err
+		}
 	}
 
 	return nil
@@ -142,6 +198,10 @@ func (m *Image) ContextValidate(ctx context.Context, formats strfmt.Registry) er
 		res = append(res, err)
 	}
 
+	if err := m.contextValidateStats(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateTags(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -160,6 +220,22 @@ func (m *Image) contextValidateMeta(ctx context.Context, formats strfmt.Registry
 				return ve.ValidateName("meta")
 			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("meta")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Image) contextValidateStats(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Stats != nil {
+		if err := m.Stats.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("stats")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("stats")
 			}
 			return err
 		}

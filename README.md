@@ -35,6 +35,29 @@ See the [API reference](https://github.com/civitai/civitai/wiki/REST-API-Referen
 the details of parameters and responses.
 
 
+### GetImages API
+This example fetches 3 images and prints their usernames and URLs.
+
+```go
+func ExampleGetImages() {
+    ctx := context.Background()
+
+    res, err := client.Default.Operations.GetImages(
+        operations.NewGetImagesParamsWithContext(ctx).WithLimit(swag.Int64(3)))
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    for _, v := range res.Payload.Items {
+        log.Println(v.Username, v.URL)
+    }
+}
+```
+
+See the [API reference](https://github.com/civitai/civitai/wiki/REST-API-Reference#get-apiv1images) to find
+the details of parameters and responses.
+
+
 ### GetModels API
 This example fetches 3 models and prints their name, ID, and tags.
 

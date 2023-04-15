@@ -30,6 +30,16 @@ func Example() {
 		log.Println(v.Username, v.ModelCount)
 	}
 
+	// List images
+	images, err := client.Default.Operations.GetImages(
+		operations.NewGetImagesParamsWithContext(ctx).WithLimit(swag.Int64(3)))
+	if err != nil {
+		log.Fatal(err)
+	}
+	for _, v := range images.Payload.Items {
+		log.Println(v.Username, v.URL)
+	}
+
 	// List models.
 	models, err := client.Default.Operations.GetModels(
 		operations.NewGetModelsParamsWithContext(ctx).WithLimit(swag.Int64(3)))
