@@ -61,7 +61,7 @@ type Model struct {
 	Stats *Stats `json:"stats,omitempty"`
 
 	// The tags associated with the model.
-	Tags []*Tag `json:"tags"`
+	Tags []interface{} `json:"tags"`
 
 	// The model type.
 	// Enum: [Checkpoint TextualInversion Hypernetwork AestheticGradient LORA LyCORIS Controlnet Wildcards Poses Other]
@@ -85,10 +85,6 @@ func (m *Model) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateStats(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateTags(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -185,32 +181,6 @@ func (m *Model) validateStats(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Model) validateTags(formats strfmt.Registry) error {
-	if swag.IsZero(m.Tags) { // not required
-		return nil
-	}
-
-	for i := 0; i < len(m.Tags); i++ {
-		if swag.IsZero(m.Tags[i]) { // not required
-			continue
-		}
-
-		if m.Tags[i] != nil {
-			if err := m.Tags[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("tags" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("tags" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
 var modelTypeTypePropEnum []interface{}
 
 func init() {
@@ -297,10 +267,6 @@ func (m *Model) ContextValidate(ctx context.Context, formats strfmt.Registry) er
 		res = append(res, err)
 	}
 
-	if err := m.contextValidateTags(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -370,26 +336,6 @@ func (m *Model) contextValidateStats(ctx context.Context, formats strfmt.Registr
 			}
 			return err
 		}
-	}
-
-	return nil
-}
-
-func (m *Model) contextValidateTags(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(m.Tags); i++ {
-
-		if m.Tags[i] != nil {
-			if err := m.Tags[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("tags" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("tags" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
 	}
 
 	return nil

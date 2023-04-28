@@ -44,7 +44,7 @@ type Image struct {
 	NeedsReview bool `json:"needsReview,omitempty"`
 
 	// Whether or not the image is NSFW (note: if the model is NSFW, treat all images on the model as NSFW).
-	Nsfw bool `json:"nsfw,omitempty"`
+	Nsfw interface{} `json:"nsfw,omitempty"`
 
 	// The ID of the post the image belongs to.
 	PostID int64 `json:"postId,omitempty"`

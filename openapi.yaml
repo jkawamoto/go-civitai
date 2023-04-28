@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   title: Civitai API
-  version: "2023-04-14"
+  version: "2023-04-27"
 host: civitai.com
 basePath: /api/v1
 schemes:
@@ -399,7 +399,7 @@ definitions:
       tags:
         type: array
         items:
-          $ref: "#/definitions/Tag"
+          type: object
         description: The tags associated with the model.
       modelVersions:
         type: array
@@ -552,7 +552,7 @@ definitions:
         type: string
         description: The url for the image.
       nsfw:
-        type: boolean
+        type: object
         description: >-
           Whether or not the image is NSFW (note: if the model is NSFW, treat all images on the model as NSFW).
       width:
