@@ -14,5 +14,5 @@
 // [Civitai API]: https://github.com/civitai/civitai/wiki/REST-API-Reference
 // [go-swagger]: https://github.com/go-swagger/go-swagger
 //
-//go:generate go run github.com/go-swagger/go-swagger/cmd/swagger@v0.30.4 generate client -f ./openapi.yaml -t .
+//go:generate go run github.com/go-swagger/go-swagger/cmd/swagger@v0.31.0 generate client -f ./openapi.yaml -t .
 package civitai

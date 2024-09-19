@@ -123,6 +123,11 @@ func (m *File) ContextValidate(ctx context.Context, formats strfmt.Registry) err
 func (m *File) contextValidateHashes(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.Hashes != nil {
+
+		if swag.IsZero(m.Hashes) { // not required
+			return nil
+		}
+
 		if err := m.Hashes.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("hashes")

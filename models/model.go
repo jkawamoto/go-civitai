@@ -64,7 +64,7 @@ type Model struct {
 	Tags []interface{} `json:"tags"`
 
 	// The model type.
-	// Enum: [Checkpoint TextualInversion Hypernetwork AestheticGradient LORA LyCORIS Controlnet Wildcards Poses Other]
+	// Enum: ["Checkpoint","TextualInversion","Hypernetwork","AestheticGradient","LORA","LyCORIS","Controlnet","Wildcards","Poses","Other"]
 	Type string `json:"type,omitempty"`
 }
 
@@ -276,6 +276,11 @@ func (m *Model) ContextValidate(ctx context.Context, formats strfmt.Registry) er
 func (m *Model) contextValidateCreator(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.Creator != nil {
+
+		if swag.IsZero(m.Creator) { // not required
+			return nil
+		}
+
 		if err := m.Creator.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("creator")
@@ -294,6 +299,11 @@ func (m *Model) contextValidateModelVersions(ctx context.Context, formats strfmt
 	for i := 0; i < len(m.ModelVersions); i++ {
 
 		if m.ModelVersions[i] != nil {
+
+			if swag.IsZero(m.ModelVersions[i]) { // not required
+				return nil
+			}
+
 			if err := m.ModelVersions[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("modelVersions" + "." + strconv.Itoa(i))
@@ -312,6 +322,11 @@ func (m *Model) contextValidateModelVersions(ctx context.Context, formats strfmt
 func (m *Model) contextValidateRank(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.Rank != nil {
+
+		if swag.IsZero(m.Rank) { // not required
+			return nil
+		}
+
 		if err := m.Rank.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("rank")
@@ -328,6 +343,11 @@ func (m *Model) contextValidateRank(ctx context.Context, formats strfmt.Registry
 func (m *Model) contextValidateStats(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.Stats != nil {
+
+		if swag.IsZero(m.Stats) { // not required
+			return nil
+		}
+
 		if err := m.Stats.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("stats")

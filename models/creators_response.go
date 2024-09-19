@@ -112,6 +112,11 @@ func (m *CreatorsResponse) contextValidateItems(ctx context.Context, formats str
 	for i := 0; i < len(m.Items); i++ {
 
 		if m.Items[i] != nil {
+
+			if swag.IsZero(m.Items[i]) { // not required
+				return nil
+			}
+
 			if err := m.Items[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("items" + "." + strconv.Itoa(i))
@@ -130,6 +135,11 @@ func (m *CreatorsResponse) contextValidateItems(ctx context.Context, formats str
 func (m *CreatorsResponse) contextValidateMetadata(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.Metadata != nil {
+
+		if swag.IsZero(m.Metadata) { // not required
+			return nil
+		}
+
 		if err := m.Metadata.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("metadata")

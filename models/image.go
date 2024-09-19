@@ -215,6 +215,11 @@ func (m *Image) ContextValidate(ctx context.Context, formats strfmt.Registry) er
 func (m *Image) contextValidateMeta(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.Meta != nil {
+
+		if swag.IsZero(m.Meta) { // not required
+			return nil
+		}
+
 		if err := m.Meta.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("meta")
@@ -231,6 +236,11 @@ func (m *Image) contextValidateMeta(ctx context.Context, formats strfmt.Registry
 func (m *Image) contextValidateStats(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.Stats != nil {
+
+		if swag.IsZero(m.Stats) { // not required
+			return nil
+		}
+
 		if err := m.Stats.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("stats")
@@ -249,6 +259,11 @@ func (m *Image) contextValidateTags(ctx context.Context, formats strfmt.Registry
 	for i := 0; i < len(m.Tags); i++ {
 
 		if m.Tags[i] != nil {
+
+			if swag.IsZero(m.Tags[i]) { // not required
+				return nil
+			}
+
 			if err := m.Tags[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("tags" + "." + strconv.Itoa(i))

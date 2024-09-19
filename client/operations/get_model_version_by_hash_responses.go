@@ -6,6 +6,7 @@ package operations
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -86,11 +87,13 @@ func (o *GetModelVersionByHashOK) Code() int {
 }
 
 func (o *GetModelVersionByHashOK) Error() string {
-	return fmt.Sprintf("[GET /model-versions/by-hash/{hash}][%d] getModelVersionByHashOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /model-versions/by-hash/{hash}][%d] getModelVersionByHashOK %s", 200, payload)
 }
 
 func (o *GetModelVersionByHashOK) String() string {
-	return fmt.Sprintf("[GET /model-versions/by-hash/{hash}][%d] getModelVersionByHashOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /model-versions/by-hash/{hash}][%d] getModelVersionByHashOK %s", 200, payload)
 }
 
 func (o *GetModelVersionByHashOK) GetPayload() *models.ModelVersion {
@@ -158,11 +161,13 @@ func (o *GetModelVersionByHashDefault) Code() int {
 }
 
 func (o *GetModelVersionByHashDefault) Error() string {
-	return fmt.Sprintf("[GET /model-versions/by-hash/{hash}][%d] getModelVersionByHash default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /model-versions/by-hash/{hash}][%d] getModelVersionByHash default %s", o._statusCode, payload)
 }
 
 func (o *GetModelVersionByHashDefault) String() string {
-	return fmt.Sprintf("[GET /model-versions/by-hash/{hash}][%d] getModelVersionByHash default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /model-versions/by-hash/{hash}][%d] getModelVersionByHash default %s", o._statusCode, payload)
 }
 
 func (o *GetModelVersionByHashDefault) GetPayload() *models.StandardError {
