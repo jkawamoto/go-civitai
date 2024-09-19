@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v4.6.0
     hooks:
       - id: check-merge-conflict
       - id: check-yaml
@@ -12,6 +12,10 @@ repos:
     hooks:
       - id: swagger-validation
   - repo: https://github.com/golangci/golangci-lint
-    rev: v1.52.2
+    rev: v1.61.0
     hooks:
       - id: golangci-lint
+  - repo: https://github.com/google/yamlfmt
+    rev: v0.13.0
+    hooks:
+      - id: yamlfmt
