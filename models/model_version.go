@@ -20,12 +20,14 @@ import (
 // swagger:model ModelVersion
 type ModelVersion struct {
 
+	// availability
+	Availability string `json:"availability,omitempty"`
+
 	// base model
 	BaseModel string `json:"baseModel,omitempty"`
 
-	// The date in which the version was created.
-	// Format: date-time
-	CreatedAt strfmt.DateTime `json:"createdAt,omitempty"`
+	// base model type
+	BaseModelType string `json:"baseModelType,omitempty"`
 
 	// The description of the model version (usually a changelog).
 	Description string `json:"description,omitempty"`
@@ -45,27 +47,26 @@ type ModelVersion struct {
 	// images
 	Images []*Image `json:"images"`
 
-	// model Id
-	ModelID int64 `json:"modelId,omitempty"`
+	// index
+	Index int64 `json:"index,omitempty"`
 
 	// The name of the model version.
 	Name string `json:"name,omitempty"`
 
+	// nsfw level
+	NsfwLevel int64 `json:"nsfwLevel,omitempty"`
+
+	// The date in which the version was published.
+	// Format: date-time
+	PublishedAt strfmt.DateTime `json:"publishedAt,omitempty"`
+
 	// The words used to trigger the model.
 	TrainedWords []string `json:"trainedWords"`
-
-	// updated at
-	// Format: date-time
-	UpdatedAt strfmt.DateTime `json:"updatedAt,omitempty"`
 }
 
 // Validate validates this model version
 func (m *ModelVersion) Validate(formats strfmt.Registry) error {
 	var res []error
-
-	if err := m.validateCreatedAt(formats); err != nil {
-		res = append(res, err)
-	}
 
 	if err := m.validateFiles(formats); err != nil {
 		res = append(res, err)
@@ -75,25 +76,13 @@ func (m *ModelVersion) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateUpdatedAt(formats); err != nil {
+	if err := m.validatePublishedAt(formats); err != nil {
 		res = append(res, err)
 	}
 
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *ModelVersion) validateCreatedAt(formats strfmt.Registry) error {
-	if swag.IsZero(m.CreatedAt) { // not required
-		return nil
-	}
-
-	if err := validate.FormatOf("createdAt", "body", "date-time", m.CreatedAt.String(), formats); err != nil {
-		return err
-	}
-
 	return nil
 }
 
@@ -149,12 +138,12 @@ func (m *ModelVersion) validateImages(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *ModelVersion) validateUpdatedAt(formats strfmt.Registry) error {
-	if swag.IsZero(m.UpdatedAt) { // not required
+func (m *ModelVersion) validatePublishedAt(formats strfmt.Registry) error {
+	if swag.IsZero(m.PublishedAt) { // not required
 		return nil
 	}
 
-	if err := validate.FormatOf("updatedAt", "body", "date-time", m.UpdatedAt.String(), formats); err != nil {
+	if err := validate.FormatOf("publishedAt", "body", "date-time", m.PublishedAt.String(), formats); err != nil {
 		return err
 	}
 

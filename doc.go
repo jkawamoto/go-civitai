@@ -1,6 +1,6 @@
 // doc.go
 //
-// Copyright (c) 2023 Junpei Kawamoto
+// Copyright (c) 2023-2024 Junpei Kawamoto
 //
 // This software is released under the MIT License.
 //

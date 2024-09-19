@@ -22,7 +22,7 @@ import (
 type Model struct {
 
 	// allow commercial use
-	AllowCommercialUse string `json:"allowCommercialUse,omitempty"`
+	AllowCommercialUse []string `json:"allowCommercialUse"`
 
 	// allow derivatives
 	AllowDerivatives bool `json:"allowDerivatives,omitempty"`
@@ -33,6 +33,9 @@ type Model struct {
 	// allow no credit
 	AllowNoCredit bool `json:"allowNoCredit,omitempty"`
 
+	// cosmetic
+	Cosmetic interface{} `json:"cosmetic,omitempty"`
+
 	// creator
 	Creator *ModelCreator `json:"creator,omitempty"`
 
@@ -41,6 +44,9 @@ type Model struct {
 
 	// The identifier for the model.
 	ID int64 `json:"id,omitempty"`
+
+	// minor
+	Minor bool `json:"minor,omitempty"`
 
 	// model versions
 	ModelVersions []*ModelVersion `json:"modelVersions"`
@@ -51,17 +57,17 @@ type Model struct {
 	// Whether the model is NSFW or not.
 	Nsfw bool `json:"nsfw,omitempty"`
 
+	// nsfw level
+	NsfwLevel int64 `json:"nsfwLevel,omitempty"`
+
 	// poi
 	Poi bool `json:"poi,omitempty"`
-
-	// rank
-	Rank *Rank `json:"rank,omitempty"`
 
 	// stats
 	Stats *Stats `json:"stats,omitempty"`
 
 	// The tags associated with the model.
-	Tags []interface{} `json:"tags"`
+	Tags []string `json:"tags"`
 
 	// The model type.
 	// Enum: ["Checkpoint","TextualInversion","Hypernetwork","AestheticGradient","LORA","LyCORIS","Controlnet","Wildcards","Poses","Other"]
@@ -72,15 +78,15 @@ type Model struct {
 func (m *Model) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateAllowCommercialUse(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateCreator(formats); err != nil {
 		res = append(res, err)
 	}
 
 	if err := m.validateModelVersions(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateRank(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -95,6 +101,42 @@ func (m *Model) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+var modelAllowCommercialUseItemsEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["None","Image","RentCivit","Rent","Sell"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		modelAllowCommercialUseItemsEnum = append(modelAllowCommercialUseItemsEnum, v)
+	}
+}
+
+func (m *Model) validateAllowCommercialUseItemsEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, modelAllowCommercialUseItemsEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *Model) validateAllowCommercialUse(formats strfmt.Registry) error {
+	if swag.IsZero(m.AllowCommercialUse) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.AllowCommercialUse); i++ {
+
+		// value enum
+		if err := m.validateAllowCommercialUseItemsEnum("allowCommercialUse"+"."+strconv.Itoa(i), "body", m.AllowCommercialUse[i]); err != nil {
+			return err
+		}
+
+	}
+
 	return nil
 }
 
@@ -138,25 +180,6 @@ func (m *Model) validateModelVersions(formats strfmt.Registry) error {
 			}
 		}
 
-	}
-
-	return nil
-}
-
-func (m *Model) validateRank(formats strfmt.Registry) error {
-	if swag.IsZero(m.Rank) { // not required
-		return nil
-	}
-
-	if m.Rank != nil {
-		if err := m.Rank.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("rank")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("rank")
-			}
-			return err
-		}
 	}
 
 	return nil
@@ -259,10 +282,6 @@ func (m *Model) ContextValidate(ctx context.Context, formats strfmt.Registry) er
 		res = append(res, err)
 	}
 
-	if err := m.contextValidateRank(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.contextValidateStats(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -314,27 +333,6 @@ func (m *Model) contextValidateModelVersions(ctx context.Context, formats strfmt
 			}
 		}
 
-	}
-
-	return nil
-}
-
-func (m *Model) contextValidateRank(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Rank != nil {
-
-		if swag.IsZero(m.Rank) { // not required
-			return nil
-		}
-
-		if err := m.Rank.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("rank")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("rank")
-			}
-			return err
-		}
 	}
 
 	return nil

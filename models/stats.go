@@ -31,6 +31,15 @@ type Stats struct {
 
 	// rating count
 	RatingCount int64 `json:"ratingCount,omitempty"`
+
+	// thumbs down count
+	ThumbsDownCount int64 `json:"thumbsDownCount,omitempty"`
+
+	// thumbs up count
+	ThumbsUpCount int64 `json:"thumbsUpCount,omitempty"`
+
+	// tipped amount count
+	TippedAmountCount int64 `json:"tippedAmountCount,omitempty"`
 }
 
 // Validate validates this stats

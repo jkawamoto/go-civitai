@@ -1,6 +1,6 @@
 // example_test.go
 //
-// Copyright (c) 2023 Junpei Kawamoto
+// Copyright (c) 2023-2024 Junpei Kawamoto
 //
 // This software is released under the MIT License.
 //
@@ -69,7 +69,7 @@ func Example() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println(ver.Payload.Name, ver.Payload.CreatedAt)
+	log.Println(ver.Payload.Name, ver.Payload.PublishedAt)
 
 	log.Println("Retrieve a model version by a hash")
 	hash := "64018b0e58e2495dbdc6b5ddfd97b39528af531c97ab4073ff13b45858a200a2"
@@ -78,7 +78,7 @@ func Example() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println(ver2.Payload.Name, ver2.Payload.UpdatedAt)
+	log.Println(ver2.Payload.Name, ver2.Payload.PublishedAt)
 
 	log.Println("List tags")
 	tags, err := client.Default.Operations.GetTags(
