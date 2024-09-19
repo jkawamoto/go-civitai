@@ -13,6 +13,18 @@ go get github.com/jkawamoto/go-civitai
 
 
 ## Examples
+### Import Statements
+For each of these examples, you will need to import these packages.
+```go
+import (
+	"context"
+	"log"
+
+	"github.com/go-openapi/swag"
+	"github.com/jkawamoto/go-civitai/client"
+	"github.com/jkawamoto/go-civitai/client/operations"
+)
+```
 ### GetCreators API
 This example fetches 3 creators and prints their name and the number of models.
 
