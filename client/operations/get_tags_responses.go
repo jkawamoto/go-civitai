@@ -6,6 +6,7 @@ package operations
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -86,11 +87,13 @@ func (o *GetTagsOK) Code() int {
 }
 
 func (o *GetTagsOK) Error() string {
-	return fmt.Sprintf("[GET /tags][%d] getTagsOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /tags][%d] getTagsOK %s", 200, payload)
 }
 
 func (o *GetTagsOK) String() string {
-	return fmt.Sprintf("[GET /tags][%d] getTagsOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /tags][%d] getTagsOK %s", 200, payload)
 }
 
 func (o *GetTagsOK) GetPayload() *models.TagsResponse {
@@ -158,11 +161,13 @@ func (o *GetTagsDefault) Code() int {
 }
 
 func (o *GetTagsDefault) Error() string {
-	return fmt.Sprintf("[GET /tags][%d] getTags default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /tags][%d] getTags default %s", o._statusCode, payload)
 }
 
 func (o *GetTagsDefault) String() string {
-	return fmt.Sprintf("[GET /tags][%d] getTags default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /tags][%d] getTags default %s", o._statusCode, payload)
 }
 
 func (o *GetTagsDefault) GetPayload() *models.StandardError {

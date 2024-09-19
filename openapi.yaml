@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   title: Civitai API
-  version: "2023-04-27"
+  version: "2024-09-19"
 host: civitai.com
 basePath: /api/v1
 schemes:
@@ -20,9 +20,7 @@ paths:
           format: int64
           in: query
           description: >-
-            The number of results to be returned per page.
-            This can be a number between 0 and 200. By default, each page will return 20 results.
-            If set to 0, it'll return all the creators.
+            The number of results to be returned per page. This can be a number between 0 and 200. By default, each page will return 20 results. If set to 0, it'll return all the creators.
           default: 20
           minimum: 0
           maximum: 200
@@ -122,8 +120,7 @@ paths:
           format: int64
           in: query
           description: >-
-            The number of results to be returned per page. This can be a number between 1 and 200.
-            By default, each page will return 100 results.
+            The number of results to be returned per page. This can be a number between 1 and 200. By default, each page will return 100 results.
           default: 100
           minimum: 0
           maximum: 200
@@ -189,8 +186,7 @@ paths:
           format: int64
           in: query
           description: >-
-            The rating you wish to filter the models with.
-            If none is specified, it will return models with any rating.
+            The rating you wish to filter the models with. If none is specified, it will return models with any rating.
         - name: favorites
           type: boolean
           in: query
@@ -205,8 +201,7 @@ paths:
           type: boolean
           in: query
           description: >-
-            Only include the primary file for each model
-            (This will use your preferred format options if you use an API token or session cookie).
+            Only include the primary file for each model (This will use your preferred format options if you use an API token or session cookie).
       responses:
         200:
           description: A list of models.
@@ -278,8 +273,7 @@ paths:
           format: int64
           in: query
           description: >-
-            The number of results to be returned per page. This can be a number between 1 and 200.
-            By default, each page will return 20 results. If set to 0, it'll return all the tags.
+            The number of results to be returned per page. This can be a number between 1 and 200. By default, each page will return 20 results. If set to 0, it'll return all the tags.
           default: 20
           minimum: 0
           maximum: 200
@@ -351,6 +345,9 @@ definitions:
         type: string
         description: Url to get all models from this user.
         example: https://civitai.com/api/v1/models?username=Civitai
+      image:
+        type: string
+        format: url
   Model:
     properties:
       id:
@@ -377,29 +374,42 @@ definitions:
           - Poses
           - Other
         description: The model type.
+      cosmetic:
+        type: object
+      minor:
+        type: boolean
       poi:
         type: boolean
       nsfw:
         type: boolean
         description: Whether the model is NSFW or not.
+      nsfwLevel:
+        type: integer
+        format: int64
       allowNoCredit:
         type: boolean
       allowCommercialUse:
-        type: string
+        type: array
+        items:
+          type: string
+          enum:
+            - None
+            - Image
+            - RentCivit
+            - Rent
+            - Sell
       allowDerivatives:
         type: boolean
       allowDifferentLicense:
         type: boolean
       stats:
         $ref: "#/definitions/Stats"
-      rank:
-        $ref: "#/definitions/Rank"
       creator:
         $ref: "#/definitions/ModelCreator"
       tags:
         type: array
         items:
-          type: object
+          type: string
         description: The tags associated with the model.
       modelVersions:
         type: array
@@ -413,6 +423,12 @@ definitions:
       favoriteCount:
         type: integer
         format: int64
+      thumbsUpCount:
+        type: integer
+        format: int64
+      thumbsDownCount:
+        type: integer
+        format: int64
       commentCount:
         type: integer
         format: int64
@@ -422,23 +438,9 @@ definitions:
       rating:
         type: number
         format: double
-  Rank:
-    properties:
-      downloadCountAllTime:
+      tippedAmountCount:
         type: integer
         format: int64
-      commentCountAllTime:
-        type: integer
-        format: int64
-      favoriteCountAllTime:
-        type: integer
-        format: int64
-      ratingCountAllTime:
-        type: integer
-        format: int64
-      ratingAllTime:
-        type: number
-        format: double
   ModelCreator:
     properties:
       username:
@@ -453,32 +455,36 @@ definitions:
         type: integer
         format: int64
         description: The identifier for the model version.
-      modelId:
+      index:
         type: integer
         format: int64
       name:
         type: string
         description: The name of the model version.
-      createdAt:
-        type: string
-        format: date-time
-        description: The date in which the version was created.
-      updatedAt:
-        type: string
-        format: date-time
-      trainedWords:
-        type: array
-        items:
-          type: string
-        description: The words used to trigger the model.
       baseModel:
         type: string
-      earlyAccessTimeFrame:
+      baseModelType:
+        type: string
+      publishedAt:
+        type: string
+        format: date-time
+        description: The date in which the version was published.
+      availability:
+        type: string
+      nsfwLevel:
         type: integer
         format: int64
       description:
         type: string
         description: The description of the model version (usually a changelog).
+      trainedWords:
+        type: array
+        items:
+          type: string
+        description: The words used to trigger the model.
+      earlyAccessTimeFrame:
+        type: integer
+        format: int64
       files:
         type: array
         items:
@@ -514,10 +520,14 @@ definitions:
       virusScanResult:
         type: string
         description: Status of the virus scan ('Pending', 'Success', 'Danger', 'Error').
+      virusScanMessage:
+        type: string
       scannedAt:
         type: string
         format: date-time
         description: The date in which the file was scanned.
+      metadata:
+        $ref: "#/definitions/FileMetadata"
       hashes:
         $ref: "#/definitions/Hash"
       downloadUrl:
@@ -525,6 +535,14 @@ definitions:
       primary:
         type: boolean
         description: If the file is the primary file for the model version.
+  FileMetadata:
+    properties:
+      format:
+        type: string
+      size:
+        type: string
+      fp:
+        type: string
   Hash:
     properties:
       AutoV1:
@@ -552,9 +570,13 @@ definitions:
         type: string
         description: The url for the image.
       nsfw:
+        type: boolean
+      nsfwLevel:
+        # Integer or "None"
         type: object
-        description: >-
-          Whether or not the image is NSFW (note: if the model is NSFW, treat all images on the model as NSFW).
+      browsingLevel:
+        type: integer
+        format: int64
       width:
         type: integer
         format: int64
@@ -566,6 +588,12 @@ definitions:
       hash:
         type: string
         description: The blurhash of the image.
+      type:
+        type: string
+      hasMeta:
+        type: boolean
+      onSite:
+        type: boolean
       createdAt:
         type: string
         format: date-time
@@ -583,20 +611,6 @@ definitions:
       username:
         type: string
         description: The username of the creator.
-      userId:
-        type: integer
-        format: int64
-      generationProcess:
-        type: string
-      needsReview:
-        type: boolean
-      scannedAt:
-        type: string
-        format: date-time
-      tags:
-        type: array
-        items:
-          $ref: "#/definitions/ImageTag"
   ImageMetadata:
     properties:
       resources:
@@ -615,25 +629,6 @@ definitions:
       weight:
         type: number
         format: double
-  ImageTag:
-    properties:
-      tag:
-        $ref: "#/definitions/ImageTagData"
-      automated:
-        type: boolean
-      needsReview:
-        type: boolean
-  ImageTagData:
-    properties:
-      id:
-        type: integer
-        format: int64
-      name:
-        type: string
-      isCategory:
-        type: boolean
-      type:
-        type: string
   ImageStats:
     properties:
       cryCount:

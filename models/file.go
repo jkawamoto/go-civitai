@@ -31,6 +31,9 @@ type File struct {
 	// id
 	ID int64 `json:"id,omitempty"`
 
+	// metadata
+	Metadata *FileMetadata `json:"metadata,omitempty"`
+
 	// name
 	Name string `json:"name,omitempty"`
 
@@ -53,6 +56,9 @@ type File struct {
 	// type
 	Type string `json:"type,omitempty"`
 
+	// virus scan message
+	VirusScanMessage string `json:"virusScanMessage,omitempty"`
+
 	// Status of the virus scan ('Pending', 'Success', 'Danger', 'Error').
 	VirusScanResult string `json:"virusScanResult,omitempty"`
 }
@@ -62,6 +68,10 @@ func (m *File) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateHashes(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateMetadata(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -94,6 +104,25 @@ func (m *File) validateHashes(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *File) validateMetadata(formats strfmt.Registry) error {
+	if swag.IsZero(m.Metadata) { // not required
+		return nil
+	}
+
+	if m.Metadata != nil {
+		if err := m.Metadata.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("metadata")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("metadata")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *File) validateScannedAt(formats strfmt.Registry) error {
 	if swag.IsZero(m.ScannedAt) { // not required
 		return nil
@@ -114,6 +143,10 @@ func (m *File) ContextValidate(ctx context.Context, formats strfmt.Registry) err
 		res = append(res, err)
 	}
 
+	if err := m.contextValidateMetadata(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -123,11 +156,37 @@ func (m *File) ContextValidate(ctx context.Context, formats strfmt.Registry) err
 func (m *File) contextValidateHashes(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.Hashes != nil {
+
+		if swag.IsZero(m.Hashes) { // not required
+			return nil
+		}
+
 		if err := m.Hashes.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("hashes")
 			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("hashes")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *File) contextValidateMetadata(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Metadata != nil {
+
+		if swag.IsZero(m.Metadata) { // not required
+			return nil
+		}
+
+		if err := m.Metadata.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("metadata")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("metadata")
 			}
 			return err
 		}

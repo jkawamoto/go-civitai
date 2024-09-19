@@ -1,15 +1,12 @@
 name: Generate Docs
-
 on:
   push:
     tags:
       - "v*.*.*"
   workflow_dispatch:
-
 permissions:
   pages: write
   id-token: write
-
 jobs:
   docs:
     runs-on: ubuntu-latest
@@ -21,9 +18,9 @@ jobs:
       - name: Generate docs
         run: npx @redocly/cli build-docs -o public/index.html openapi.yaml
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           path: public
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v4

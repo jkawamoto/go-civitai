@@ -7,7 +7,6 @@ package models
 
 import (
 	"context"
-	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -20,13 +19,16 @@ import (
 // swagger:model Image
 type Image struct {
 
+	// browsing level
+	BrowsingLevel int64 `json:"browsingLevel,omitempty"`
+
 	// The date the image was posted.
 	// Example: 2023-04-06T09:14:50.762Z
 	// Format: date-time
 	CreatedAt strfmt.DateTime `json:"createdAt,omitempty"`
 
-	// generation process
-	GenerationProcess string `json:"generationProcess,omitempty"`
+	// has meta
+	HasMeta bool `json:"hasMeta,omitempty"`
 
 	// The blurhash of the image.
 	Hash string `json:"hash,omitempty"`
@@ -40,30 +42,26 @@ type Image struct {
 	// The generation params of the image.
 	Meta *ImageMetadata `json:"meta,omitempty"`
 
-	// needs review
-	NeedsReview bool `json:"needsReview,omitempty"`
+	// nsfw
+	Nsfw bool `json:"nsfw,omitempty"`
 
-	// Whether or not the image is NSFW (note: if the model is NSFW, treat all images on the model as NSFW).
-	Nsfw interface{} `json:"nsfw,omitempty"`
+	// nsfw level
+	NsfwLevel interface{} `json:"nsfwLevel,omitempty"`
+
+	// on site
+	OnSite bool `json:"onSite,omitempty"`
 
 	// The ID of the post the image belongs to.
 	PostID int64 `json:"postId,omitempty"`
 
-	// scanned at
-	// Format: date-time
-	ScannedAt strfmt.DateTime `json:"scannedAt,omitempty"`
-
 	// stats
 	Stats *ImageStats `json:"stats,omitempty"`
 
-	// tags
-	Tags []*ImageTag `json:"tags"`
+	// type
+	Type string `json:"type,omitempty"`
 
 	// The url for the image.
 	URL string `json:"url,omitempty"`
-
-	// user Id
-	UserID int64 `json:"userId,omitempty"`
 
 	// The username of the creator.
 	Username string `json:"username,omitempty"`
@@ -84,15 +82,7 @@ func (m *Image) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateScannedAt(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateStats(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateTags(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -133,18 +123,6 @@ func (m *Image) validateMeta(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Image) validateScannedAt(formats strfmt.Registry) error {
-	if swag.IsZero(m.ScannedAt) { // not required
-		return nil
-	}
-
-	if err := validate.FormatOf("scannedAt", "body", "date-time", m.ScannedAt.String(), formats); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *Image) validateStats(formats strfmt.Registry) error {
 	if swag.IsZero(m.Stats) { // not required
 		return nil
@@ -164,32 +142,6 @@ func (m *Image) validateStats(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Image) validateTags(formats strfmt.Registry) error {
-	if swag.IsZero(m.Tags) { // not required
-		return nil
-	}
-
-	for i := 0; i < len(m.Tags); i++ {
-		if swag.IsZero(m.Tags[i]) { // not required
-			continue
-		}
-
-		if m.Tags[i] != nil {
-			if err := m.Tags[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("tags" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("tags" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
 // ContextValidate validate this image based on the context it is used
 func (m *Image) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
@@ -202,10 +154,6 @@ func (m *Image) ContextValidate(ctx context.Context, formats strfmt.Registry) er
 		res = append(res, err)
 	}
 
-	if err := m.contextValidateTags(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -215,6 +163,11 @@ func (m *Image) ContextValidate(ctx context.Context, formats strfmt.Registry) er
 func (m *Image) contextValidateMeta(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.Meta != nil {
+
+		if swag.IsZero(m.Meta) { // not required
+			return nil
+		}
+
 		if err := m.Meta.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("meta")
@@ -231,6 +184,11 @@ func (m *Image) contextValidateMeta(ctx context.Context, formats strfmt.Registry
 func (m *Image) contextValidateStats(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.Stats != nil {
+
+		if swag.IsZero(m.Stats) { // not required
+			return nil
+		}
+
 		if err := m.Stats.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("stats")
@@ -239,26 +197,6 @@ func (m *Image) contextValidateStats(ctx context.Context, formats strfmt.Registr
 			}
 			return err
 		}
-	}
-
-	return nil
-}
-
-func (m *Image) contextValidateTags(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(m.Tags); i++ {
-
-		if m.Tags[i] != nil {
-			if err := m.Tags[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("tags" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("tags" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
 	}
 
 	return nil

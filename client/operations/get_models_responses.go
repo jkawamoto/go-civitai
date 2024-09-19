@@ -6,6 +6,7 @@ package operations
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
@@ -86,11 +87,13 @@ func (o *GetModelsOK) Code() int {
 }
 
 func (o *GetModelsOK) Error() string {
-	return fmt.Sprintf("[GET /models][%d] getModelsOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /models][%d] getModelsOK %s", 200, payload)
 }
 
 func (o *GetModelsOK) String() string {
-	return fmt.Sprintf("[GET /models][%d] getModelsOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /models][%d] getModelsOK %s", 200, payload)
 }
 
 func (o *GetModelsOK) GetPayload() *models.ModelsResponse {
@@ -158,11 +161,13 @@ func (o *GetModelsDefault) Code() int {
 }
 
 func (o *GetModelsDefault) Error() string {
-	return fmt.Sprintf("[GET /models][%d] getModels default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /models][%d] getModels default %s", o._statusCode, payload)
 }
 
 func (o *GetModelsDefault) String() string {
-	return fmt.Sprintf("[GET /models][%d] getModels default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /models][%d] getModels default %s", o._statusCode, payload)
 }
 
 func (o *GetModelsDefault) GetPayload() *models.StandardError {

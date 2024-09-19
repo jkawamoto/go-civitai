@@ -17,6 +17,9 @@ import (
 // swagger:model Creator
 type Creator struct {
 
+	// image
+	Image string `json:"image,omitempty"`
+
 	// Url to get all models from this user.
 	// Example: https://civitai.com/api/v1/models?username=Civitai
 	Link string `json:"link,omitempty"`
